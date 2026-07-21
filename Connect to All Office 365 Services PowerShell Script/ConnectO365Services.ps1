@@ -36,8 +36,9 @@ Param
 (
     [Parameter(Mandatory = $false)]
     [switch]$Disconnect,
-    [ValidateSet('MSGraph','MSGraphBeta','ExchangeOnline','SharePointOnline','SharePointPnP','SecAndCompCenter','MSTeams','MSEntra')]
-    [string[]]$Services=("ExchangeOnline",'MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','MSGraph','MSGraphBeta','MSEntra'),
+    # Load order needs MSGraph early to to obtain SharePointHostName. MSTeams also needs to be early in the load order to prevent login issues
+    [ValidateSet('MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra')]
+    [string[]]$Services=('MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra'),
     [string]$SharePointHostName,
     [Switch]$MFA,
     [Switch]$CBA,
