@@ -42,7 +42,6 @@ Param
     [string]$SharePointHostName,
     [Switch]$MFA,
     [Switch]$CBA,
-    [String]$TenantName,
     [string]$TenantId,
     [string]$AppId,
     [string]$CertificateThumbprint,
@@ -75,7 +74,7 @@ else
   $Credential  = New-Object System.Management.Automation.PSCredential $UserName,$SecuredPassword 
   $CredentialPassed=$true
  } 
- elseif((($AppId -ne "") -and ($CertificateThumbPrint -ne "")) -and (($TenantId -ne "") -or ($TenantName -ne "")))
+ elseif(($AppId -ne "") -and ($CertificateThumbPrint -ne "") -and ($TenantId -ne ""))
  {
   $CBA=$true
  }
@@ -143,7 +142,12 @@ else
     }
     elseif($CBA -eq $true)
     {
-     Connect-ExchangeOnline -AppId $AppId -CertificateThumbprint $CertificateThumbprint -Organization $TenantName -ShowBanner:$false
+     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
+     {
+      Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
+      $SharePointHostName = Read-Host "Please enter SharePoint organization name"  
+     }
+     Connect-ExchangeOnline -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -CertificateThumbprint $CertificateThumbprint -ShowBanner:$false
     }
     elseif($MFA -eq $true)
     {
@@ -188,7 +192,7 @@ else
     elseif($CBA -eq $true)
     {
      $Cert = Get-ChildItem Cert:\CurrentUser\My\$CertificateThumbprint
-     Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -Tenant $TenantName -Certificate $Cert
+     Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com -TenantId $TenantId -ClientId $AppId -Certificate $Cert
     }
     elseif($MFA -eq $true)
     {
@@ -222,7 +226,7 @@ else
 
     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
     {
-     Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.com -ForegroundColor Yellow
+     Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
      $SharePointHostName= Read-Host "Please enter SharePoint organization name"  
     }
     
@@ -238,12 +242,7 @@ else
     } 
     elseif($CBA -eq $true)
     {
-     if($TenantName -eq "")
-     {
-      Write-Host Tenant name is required.`ne.g. contoso.onmicrosoft.com -ForegroundColor Yellow
-      $TenantName= Read-Host "Please enter your tenant name"  
-     }
-     Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -Thumbprint $CertificateThumbprint -Tenant $TenantName
+     Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -Tenant $TenantId -ClientId $AppId -Thumbprint $CertificateThumbprint
     }
      elseif($MFA -eq $true)
     {
@@ -281,12 +280,12 @@ else
     }
     elseif($CBA -eq $true)
     {
-     if($TenantName -eq "")
+     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
      {
-      Write-Host Orgnaization name is required.`ne.g. contoso.onmicrosoft.com -ForegroundColor Yellow
-      $TenantName= Read-Host "Please enter your Organization name"  
+      Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
+      $SharePointHostName = Read-Host "Please enter SharePoint organization name"  
      }
-     Connect-IPPSSession -AppId $AppId -CertificateThumbprint $CertificateThumbprint -Organization $TenantName -ShowBanner:$false
+     Connect-IPPSSession -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -CertificateThumbprint $CertificateThumbprint -ShowBanner:$false
     }
     elseif($MFA -eq $true)
     {
