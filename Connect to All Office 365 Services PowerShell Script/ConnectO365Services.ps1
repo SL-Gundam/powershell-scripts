@@ -79,6 +79,10 @@ else
  {
   $CBA=$true
  }
+ else
+ {
+  $MFA=$true
+ }
 
  $ConnectedServices=""
  if($Services.Length -eq 8)
