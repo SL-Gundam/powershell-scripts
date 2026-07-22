@@ -145,7 +145,7 @@ else
     {
      Connect-ExchangeOnline -AppId $AppId -CertificateThumbprint $CertificateThumbprint -Organization $TenantName -ShowBanner:$false
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-ExchangeOnline -ShowBanner:$false
     }
@@ -190,7 +190,7 @@ else
      $Cert = Get-ChildItem Cert:\CurrentUser\My\$CertificateThumbprint
      Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -Tenant $TenantName -Certificate $Cert
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com
     }
@@ -245,7 +245,7 @@ else
      }
      Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -Thumbprint $CertificateThumbprint -Tenant $TenantName
     }
-     else
+     elseif($MFA -eq $true)
     {
      
      Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -WarningAction Ignore -Interactive
@@ -288,7 +288,7 @@ else
      }
      Connect-IPPSSession -AppId $AppId -CertificateThumbprint $CertificateThumbprint -Organization $TenantName -ShowBanner:$false
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-IPPSSession -ShowBanner:$false
     }
@@ -326,7 +326,7 @@ else
     {
      $Teams=Connect-MicrosoftTeams -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint
     }
-    else
+    elseif($MFA -eq $true)
     {
      $Teams=Connect-MicrosoftTeams
     }
@@ -368,7 +368,7 @@ else
     {
      Connect-MgGraph -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-MgGraph -NoWelcome
     }
@@ -411,7 +411,7 @@ else
     {
      Connect-MgGraph -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-MgGraph -NoWelcome
     }
@@ -454,7 +454,7 @@ else
     {
      Connect-Entra -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
     }
-    else
+    elseif($MFA -eq $true)
     {
      Connect-Entra -NoWelcome
     }
