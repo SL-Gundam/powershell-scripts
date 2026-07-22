@@ -84,6 +84,24 @@ else
   $MFA=$true
  }
 
+ if($CBA -eq $true)
+ {
+  $Certificate = Get-ChildItem Cert:\ -Recurse |
+   Where-Object { $_.Thumbprint -eq $CertificateThumbprint } |
+   Select-Object -First 1
+  if (-not $Certificate)
+  {
+   Write-Host Certificate with thumbprint $CertificateThumbprint not found in certificate store -ForegroundColor Red
+   Write-Host Falling back to MFA. -ForegroundColor Yellow
+   $CBA=$false
+   $MFA=$true
+  }
+  else
+  {
+   Write-Host Retrieved certificate from store -ForegroundColor Green
+  }
+ }
+
  $ConnectedServices=""
  if($Services.Length -eq 8)
  {
