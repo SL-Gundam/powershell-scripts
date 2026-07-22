@@ -147,7 +147,7 @@ else
       Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
       $SharePointHostName = Read-Host "Please enter SharePoint organization name"  
      }
-     Connect-ExchangeOnline -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -CertificateThumbprint $CertificateThumbprint -ShowBanner:$false
+     Connect-ExchangeOnline -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -Certificate $Certificate -ShowBanner:$false
     }
     elseif($MFA -eq $true)
     {
@@ -349,7 +349,7 @@ else
       Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
       $SharePointHostName = Read-Host "Please enter SharePoint organization name"  
      }
-     Connect-IPPSSession -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -CertificateThumbprint $CertificateThumbprint -ShowBanner:$false
+     Connect-IPPSSession -Organization "$($SharePointHostName).onmicrosoft.com" -AppId $AppId -Certificate $Certificate -ShowBanner:$false
     }
     elseif($MFA -eq $true)
     {
@@ -363,7 +363,7 @@ else
    }
   
    #Module and Connection settings for Teams Online module
-  MSTeams
+   MSTeams
    {
     $Module=Get-InstalledModule -Name MicrosoftTeams -ErrorAction SilentlyContinue
     if($Module.count -eq 0)
@@ -372,7 +372,7 @@ else
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
      if($Confirm -match "[yY]")
      {
-      Install-Module MicrosoftTeams -AllowClobber -Force -Scope CurrentUser
+      Install-Module MicrosoftTeams -AllowClobber -Scope CurrentUser
      }
      else
      {
@@ -387,7 +387,7 @@ else
     }
     elseif($CBA -eq $true)
     {
-     $Teams=Connect-MicrosoftTeams -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint
+     $Teams=Connect-MicrosoftTeams -TenantId $TenantId -ApplicationId $AppId -Certificate $Certificate
     }
     elseif($MFA -eq $true)
     {
@@ -402,7 +402,7 @@ else
    }
 
    #Module and connection settings for MS Graph PowerShell
-  MSGraph
+   MSGraph
    {
     #Check for module installation
     $Module=Get-InstalledModule -Name Microsoft.Graph -ErrorAction SilentlyContinue
@@ -413,7 +413,7 @@ else
      if($Confirm -match "[yY]") 
      { 
       Write-host "Installing Microsoft Graph PowerShell module..."
-      Install-Module Microsoft.Graph -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
+      Install-Module Microsoft.Graph -AllowClobber -Scope CurrentUser
      }
      else
      {
@@ -425,19 +425,19 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-MgGraph -NoWelcome
+     Connect-MgGraph -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
-     Connect-MgGraph -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
+     Connect-MgGraph -TenantId $TenantId -ClientId $AppId -Certificate $Certificate -ContextScope Process -NoWelcome
     }
     elseif($MFA -eq $true)
     {
-     Connect-MgGraph -NoWelcome
+     Connect-MgGraph -ContextScope Process -NoWelcome
     }
 
     #Check for MS Graph connectivity
- If((Get-MgUser -Top 1) -ne $null)
+    If((Get-MgUser -Top 1) -ne $null)
     {
      $ConnectedServices+="MS Graph"
 
@@ -447,7 +447,7 @@ else
    }
 
    #Module and connection settings for MS Graph Beta PowerShell
-  MSGraphBeta
+   MSGraphBeta
    {
     #Check for module installation
     $Module=Get-InstalledModule -Name Microsoft.Graph.Beta -ErrorAction SilentlyContinue
@@ -458,7 +458,7 @@ else
      if($Confirm -match "[yY]") 
      { 
       Write-host "Installing Microsoft Graph Beta PowerShell module..."
-      Install-Module Microsoft.Graph.Beta -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
+      Install-Module Microsoft.Graph.Beta -AllowClobber -Scope CurrentUser
      }
      else
      {
@@ -470,15 +470,15 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph Beta doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-MgGraph -NoWelcome
+     Connect-MgGraph -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
-     Connect-MgGraph -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
+     Connect-MgGraph -TenantId $TenantId -ClientId $AppId -Certificate $Certificate -ContextScope Process -NoWelcome
     }
     elseif($MFA -eq $true)
     {
-     Connect-MgGraph -NoWelcome
+     Connect-MgGraph -ContextScope Process -NoWelcome
     }
 
     #Check for MS Graph Beta connectivity
@@ -496,18 +496,18 @@ else
    {
     #Check for module installation
     $Module=Get-InstalledModule -Name Microsoft.Entra -ErrorAction SilentlyContinue
-    if($Module.count -eq 0) 
+    if($Module.count -eq 0)
     { 
-     Write-Host Microsoft Entra PowerShell module is not available  -ForegroundColor yellow  
-     $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No 
-     if($Confirm -match "[yY]") 
+     Write-Host Microsoft Entra PowerShell module is not available  -ForegroundColor yellow
+     $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
+     if($Confirm -match "[yY]")
      { 
       Write-host "Installing Microsoft Entra PowerShell module..."
-      Install-Module Microsoft.Entra -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
+      Install-Module Microsoft.Entra -AllowClobber -Scope CurrentUser
      }
      else
      {
-      Write-Host "Microsoft Entra PowerShell module is required. Please install module using 'Install-Module Microsoft.Entra' cmdlet." 
+      Write-Host "Microsoft Entra PowerShell module is required. Please install module using 'Install-Module Microsoft.Entra' cmdlet."
      }
      Continue
     }
@@ -515,15 +515,15 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Entra doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-Entra -NoWelcome
+     Connect-Entra -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
-     Connect-Entra -ApplicationId $AppId -TenantId $TenantId -CertificateThumbPrint $CertificateThumbprint -NoWelcome
+     Connect-Entra -ApplicationId $AppId -TenantId $TenantId -Certificate $Certificate -ContextScope Process -NoWelcome
     }
     elseif($MFA -eq $true)
     {
-     Connect-Entra -NoWelcome
+     Connect-Entra -ContextScope Process -NoWelcome
     }
 
     #Check for MS Entra connectivity
