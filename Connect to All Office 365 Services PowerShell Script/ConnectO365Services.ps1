@@ -131,7 +131,7 @@ else
      }
      else
      {
-      Write-Host EXO PowerShell module is required to connect Exchange Online.Please install module using Install-Module ExchangeOnlineManagement cmdlet.
+      Write-Host EXO PowerShell module is required to connect Exchange Online. Please install module using Install-Module ExchangeOnlineManagement cmdlet.
      }
      Continue
     }
@@ -173,7 +173,7 @@ else
      }
      else
      {
-      Write-Host SharePoint Online PowerShell module is required.Please install module using Install-Module Microsoft.Online.SharePoint.PowerShell cmdlet.
+      Write-Host SharePoint Online PowerShell module is required. Please install module using Install-Module Microsoft.Online.SharePoint.PowerShell cmdlet.
      }
      Continue
     }
@@ -219,7 +219,7 @@ else
      }
      else
      {
-      Write-Host SharePoint Pnp module is required.Please install module using Install-Module PnP.PowerShell cmdlet.
+      Write-Host SharePoint Pnp module is required. Please install module using Install-Module PnP.PowerShell cmdlet.
      }
      Continue
     }
@@ -269,7 +269,7 @@ else
      }
      else
      {
-      Write-Host EXO PowerShell module is required to connect Security and Compliance PowerShell.Please install module using Install-Module ExchangeOnlineManagement cmdlet.
+      Write-Host EXO PowerShell module is required to connect Security and Compliance PowerShell. Please install module using Install-Module ExchangeOnlineManagement cmdlet.
      }
      Continue
     }
@@ -312,7 +312,7 @@ else
      }
      else
      {
-      Write-Host MicrosoftTeams module is required.Please install module using Install-Module MicrosoftTeams cmdlet.
+      Write-Host MicrosoftTeams module is required. Please install module using Install-Module MicrosoftTeams cmdlet.
      }
      Continue
     }
@@ -341,7 +341,7 @@ else
   MSGraph
    {
     #Check for module installation
-    $Module=Get-InstalledModule -Name microsoft.graph -ErrorAction SilentlyContinue
+    $Module=Get-InstalledModule -Name Microsoft.Graph -ErrorAction SilentlyContinue
     if($Module.count -eq 0) 
     { 
      Write-Host Microsoft Graph PowerShell SDK is not available  -ForegroundColor yellow  
@@ -386,7 +386,7 @@ else
   MSGraphBeta
    {
     #Check for module installation
-    $Module=Get-InstalledModule -Name microsoft.graph.beta -ErrorAction SilentlyContinue
+    $Module=Get-InstalledModule -Name Microsoft.Graph.Beta -ErrorAction SilentlyContinue
     if($Module.count -eq 0) 
     { 
      Write-Host Microsoft Graph Beta PowerShell SDK is not available  -ForegroundColor yellow  
