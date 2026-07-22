@@ -376,7 +376,9 @@ else
  If((Get-MgUser -Top 1) -ne $null)
     {
      $ConnectedServices+="MS Graph"
-     
+
+     $domain = (Get-MgDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
+     $SharePointHostName = $domain[0].trim()
     }
    }
 
@@ -419,7 +421,9 @@ else
     If((Get-MgBetaUser -Top 1) -ne $null)
     {
      $ConnectedServices+="MS Graph Beta"
-     
+
+     $domain = (Get-MgBetaDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
+     $SharePointHostName = $domain[0].trim()
     }
    }
 
