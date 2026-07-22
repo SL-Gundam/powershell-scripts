@@ -102,7 +102,7 @@ else
   }
  }
 
- $ConnectedServices=""
+ $ConnectedServices=@()
  if($Services.Length -eq 8)
  {
   $RequiredServices=$Services  
@@ -153,11 +153,7 @@ else
     }
     If((Get-EXOMailbox -ResultSize 1) -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" Exchange Online"
+     $ConnectedServices+="Exchange Online"
     }
    }
 
@@ -203,11 +199,7 @@ else
     }
     if((Get-SPOTenant) -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" SharePoint Online"
+     $ConnectedServices+="SharePoint Online"
     }
    }
 
@@ -265,11 +257,7 @@ else
     }
     If ($? -eq $true)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" SharePoint PnP"  
+     $ConnectedServices+="SharePoint PnP"
     }
    }
 
@@ -314,11 +302,7 @@ else
     $Result=Get-RetentionCompliancePolicy
     If(($?) -eq $true)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" Security & Compliance Center"
+     $ConnectedServices+="Security & Compliance Center"
     }
    }
   
@@ -359,11 +343,7 @@ else
     #Check for Teams connectivity
     If($Teams -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" MS Teams"
+     $ConnectedServices+="MS Teams"
     }
    }
 
@@ -407,11 +387,7 @@ else
     #Check for MS Graph connectivity
  If((Get-MgUser -Top 1) -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" MS Graph"
+     $ConnectedServices+="MS Graph"
      
     }
    }
@@ -456,11 +432,7 @@ else
     #Check for MS Graph Beta connectivity
     If((Get-MgBetaUser -Top 1) -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" MS Graph Beta"
+     $ConnectedServices+="MS Graph Beta"
      
     }
    }
@@ -505,21 +477,14 @@ else
     #Check for MS Entra connectivity
     If((Get-EntraUser -Top 1) -ne $null)
     {
-     if($ConnectedServices -ne "")
-     {
-      $ConnectedServices=$ConnectedServices+","
-     }
-     $ConnectedServices=$ConnectedServices+" MS Entra"
+     $ConnectedServices+="MS Entra"
     }
    }
   }
  }
 
- if($ConnectedServices -eq "")
- {
-  $ConnectedServices="-"
- }
- Write-Host `n`nConnected Services - $ConnectedServices -ForegroundColor Cyan
+ $CSstring = $ConnectedServices -join ", "
+ Write-Host `n`nConnected Services - $CSstring -ForegroundColor Cyan
  Write-Host `n~~ Script prepared by AdminDroid Community ~~`n -ForegroundColor Green
  Write-Host "~~ Check out " -NoNewline -ForegroundColor Green; Write-Host "admindroid.com" -ForegroundColor Yellow -NoNewline; Write-Host " to access 3,000+ reports and 450+ management actions across your Microsoft 365 environment. ~~" -ForegroundColor Green `n`n
 }
