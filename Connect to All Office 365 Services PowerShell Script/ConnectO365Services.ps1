@@ -129,7 +129,6 @@ else
      if($Confirm -match "[yY]")
      {
       Install-Module ExchangeOnlineManagement -Scope CurrentUser
-      Import-Module ExchangeOnlineManagement
      }
      else
      {
@@ -138,7 +137,6 @@ else
      Continue
     }
 
-    Import-Module ExchangeOnlineManagement
     if($CredentialPassed -eq $true)
     {
      Connect-ExchangeOnline -Credential $Credential -ShowBanner:$false
@@ -168,7 +166,6 @@ else
      if($Confirm -match "[yY]")
      {
       Install-Module Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser
-      Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell -DisableNameChecking
      }
      else
      {
@@ -215,7 +212,6 @@ else
      if($Confirm -match "[yY]")
      {
       Install-Module -Name PnP.PowerShell -AllowClobber -Scope CurrentUser
-      Import-Module PnP.PowerShell -DisableNameChecking
      }
      else
      {
@@ -224,7 +220,6 @@ else
      Continue
     }
 
-    Import-Module PnP.PowerShell -DisableNameChecking
     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
     {
      Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.com -ForegroundColor Yellow
@@ -272,7 +267,6 @@ else
      if($Confirm -match "[yY]")
      {
       Install-Module ExchangeOnlineManagement -Scope CurrentUser
-      Import-Module ExchangeOnlineManagement
      }
      else
      {
@@ -281,7 +275,6 @@ else
      Continue
     }
 
-    Import-Module ExchangeOnlineManagement
     if($CredentialPassed -eq $true)
     {
      Connect-IPPSSession -Credential $Credential -ShowBanner:$false
@@ -317,7 +310,6 @@ else
      if($Confirm -match "[yY]")
      {
       Install-Module MicrosoftTeams -AllowClobber -Force -Scope CurrentUser
-      Import-Module MicrosoftTeams -DisableNameChecking
      }
      else
      {
@@ -326,7 +318,6 @@ else
      Continue
     }
 
-    Import-Module MicrosoftTeams -DisableNameChecking
     if($CredentialPassed -eq $true)
     {
      $Teams=Connect-MicrosoftTeams -Credential $Credential
@@ -360,7 +351,6 @@ else
      { 
       Write-host "Installing Microsoft Graph PowerShell module..."
       Install-Module Microsoft.Graph -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
-      Import-Module Microsoft.Graph.Users -DisableNameChecking
      }
      else
      {
@@ -369,7 +359,6 @@ else
      Continue
     }
     
-    Import-Module Microsoft.Graph.Users -DisableNameChecking
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph doesn't support passing credential as parameters. Please enter the credential in the prompt."
@@ -405,7 +394,6 @@ else
      { 
       Write-host "Installing Microsoft Graph Beta PowerShell module..."
       Install-Module Microsoft.Graph.Beta -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
-      Import-Module Microsoft.Graph.Beta.Users -DisableNameChecking
      }
      else
      {
@@ -414,7 +402,6 @@ else
      Continue
     }
 
-    Import-Module Microsoft.Graph.Beta.Users -DisableNameChecking
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph Beta doesn't support passing credential as parameters. Please enter the credential in the prompt."
@@ -450,7 +437,6 @@ else
      { 
       Write-host "Installing Microsoft Entra PowerShell module..."
       Install-Module Microsoft.Entra -Repository PSGallery -Scope CurrentUser -AllowClobber -Force
-      Import-Module Microsoft.Entra.Users -DisableNameChecking
      }
      else
      {
@@ -459,7 +445,6 @@ else
      Continue
     }
     
-    Import-Module Microsoft.Entra.Users -DisableNameChecking
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Entra doesn't support passing credential as parameters. Please enter the credential in the prompt."
