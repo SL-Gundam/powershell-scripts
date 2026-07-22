@@ -53,18 +53,19 @@ Param
 #Disconnecting Sessions
 if($Disconnect.IsPresent)
 {
- #Disconnect Exchange Online,Skype and Security & Compliance center session
+ #Disconnect Exchange Online and Security & Compliance center connection
  Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
  #Disconnect Teams connection
  Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
- #Disconnect SharePoint connection
+ #Disconnect SharePoint/PnP connection
  Disconnect-SPOService -ErrorAction SilentlyContinue
  Disconnect-PnPOnline -ErrorAction SilentlyContinue
- #Disconnect MS Graph PowerShell
+ #Disconnect MS Graph PowerShell connection
  Disconnect-MgGraph -ErrorAction SilentlyContinue
- #Disconnect MS Entra PowerShell
+ #Disconnect MS Entra PowerShell connection
  Disconnect-Entra -ErrorAction SilentlyContinue
- Write-Host All sessions in the current window has been removed. -ForegroundColor Yellow
+
+ Write-Host All sessions in the current window have been removed. -ForegroundColor Yellow
 }
 else
 {
