@@ -216,51 +216,103 @@ else
     }
    }
 
-
    #Module and Connection settings for Sharepoint PnP module
    SharePointPnP
    {
-    $Module=Get-InstalledModule -Name PnP.PowerShell -ErrorAction SilentlyContinue
+    # PnP.PowerShell 1.12.0 was the last to support Powershell 5.
+    if(($PSVersionTable::PSVersion.Major) -ge 7)
+    {
+     $PnPModule = "PnP.PowerShell" # powershell 7.
+    }
+    else
+    {
+     $PnPModule = "SharePointPnPPowerShellOnline" # powershell 5
+    }
+    $Module=Get-InstalledModule -Name $PnPModule -ErrorAction SilentlyContinue
     if($Module.count -eq 0)
     {
      Write-Host SharePoint PnP module module is not available  -ForegroundColor yellow 
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
      if($Confirm -match "[yY]")
      {
-      Install-Module -Name PnP.PowerShell -AllowClobber -Scope CurrentUser
+      Install-Module -Name $PnPModule -AllowClobber -Scope CurrentUser
      }
      else
      {
-      Write-Host SharePoint Pnp module is required. Please install module using Install-Module PnP.PowerShell cmdlet.
+      Write-Host SharePoint PnP module is required. Please install module using Install-Module $PnPModule cmdlet.
      }
      Continue
     }
 
-    if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
+    if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") )
     {
      Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
-     $SharePointHostName= Read-Host "Please enter SharePoint organization name"  
+     $SharePointHostName = Read-Host "Please enter SharePoint organization name"
     }
-    
-    if($AppId -eq "")
+
+    if($CBA -eq $true)
     {
-     Write-Host `nClient Id is mandatory to connect SharePoint PnP PowerShell -ForegroundColor Yellow
-     $AppId= Read-Host "Please enter client id to connect PnP PowerShell"
-    }
-   
-    if($CredentialPassed -eq $true)
-    {
-     Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com  -credential $credential -ClientId $AppId  -WarningAction Ignore
+     # Powershell 7 PnP module does not support -Certificate. So required to use -Thumbprint.
+     Connect-PnPOnline -Url https://$($SharePointHostName)-admin.sharepoint.com -Tenant $TenantId -ClientId $AppId -Thumbprint $CertificateThumbprint -WarningAction Ignore
     } 
-    elseif($CBA -eq $true)
+    elseif(($CredentialPassed -eq $true) -or ($MFA -eq $true))
     {
-     Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -Tenant $TenantId -ClientId $AppId -Thumbprint $CertificateThumbprint
-    }
+     if(($PSVersionTable::PSVersion.Major) -ge 7)
+     {
+      $JSON = Get-Content "$PSScriptRoot/Tenants.json" -ErrorAction SilentlyContinue | ConvertFrom-Json
+
+      if (-not $JSON) {
+       $JSON = [PSCustomObject]@{}
+      }
+
+      if (-not $JSON.PnP7) {
+       $JSON | Add-Member -MemberType NoteProperty -Name PnP7 -Value ([PSCustomObject]@{})
+       #$JSON.PnP7 = @()
+      }
+
+      if($JSON.PnP7.$SharePointHostName) {
+       $PnPClientID = $JSON.PnP7.$SharePointHostName
+      }
+      else {
+       if($RequiredServices -contains "MSGraph") {
+        $PnPapp = Get-MgApplication -ConsistencyLevel eventual -Filter "DisplayName eq 'PnP.PowerShell'"
+       }
+       else {
+        $PnPapp = $false
+       }
+       if (-not $app) {
+        Write-Host "Adding PnP.PowerShell App..." -ForegroundColor Yellow
+        $NEWPnPapp = Register-PnPEntraIDAppForInteractiveLogin -ApplicationName "PnP.PowerShell" -Tenant "$($SharePointHostName).onmicrosoft.com"
+        $PnPClientID= $NEWPnPapp.'AzureAppId/ClientId'
+       }
+       else {
+        Write-Host "Existing PnP.PowerShell App found..." -ForegroundColor Yellow
+        $PnPClientID = $PnPapp.AppId
+       }
+       $JSON.PnP7 | Add-Member -MemberType NoteProperty -Name $SharePointHostName -Value $PnPClientID
+       $JSON.PnP7.$SharePointHostName = $PnPClientID
+      }
+
+      $JSON | ConvertTo-Json | Set-Content -Path "$PSScriptRoot/Tenants.json"
+     }
+
+     if($CredentialPassed -eq $true)
+     {
+      Connect-PnPOnline -Url https://$($SharePointHostName)-admin.sharepoint.com  -credential $credential -ClientId $PnPClientID  -WarningAction Ignore
+     } 
      elseif($MFA -eq $true)
-    {
-     
-     Connect-PnPOnline -Url https://$SharePointHostName-admin.sharepoint.com -ClientId $AppId -WarningAction Ignore -Interactive
+     {
+      if(($PSVersionTable::PSVersion.Major) -ge 7)
+      {
+       Connect-PnPOnline -Url https://$($SharePointHostName)-admin.sharepoint.com -Interactive -ClientId $PnPClientID -WarningAction Ignore
+      }
+      else
+      {
+       Connect-PnPOnline -Url https://$($SharePointHostName)-admin.sharepoint.com -UseWebLogin -WarningAction Ignore
+      }
+     }
     }
+
     If ($? -eq $true)
     {
      $ConnectedServices+="SharePoint PnP"
