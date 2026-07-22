@@ -178,25 +178,37 @@ else
      Continue
     }
 
-    Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell -DisableNameChecking -WarningAction SilentlyContinue
     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") ) 
     {
      Write-Host SharePoint organization name is required.`nEg: Contoso for admin@Contoso.Onmicrosoft.com -ForegroundColor Yellow
      $SharePointHostName = Read-Host "Please enter SharePoint organization name"  
     }
 
+    if(($PSVersionTable::PSVersion.Major) -ge 7)
+    {
+     Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell -DisableNameChecking
+     Write-Host The login dialog could be hidden behind another window -ForegroundColor Red
+    }
+
     if($CredentialPassed -eq $true)
     {
-     Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com -credential $credential
+     Connect-SPOService -Url https://$($SharePointHostName)-admin.sharepoint.com -credential $credential
     } 
     elseif($CBA -eq $true)
     {
-     $Cert = Get-ChildItem Cert:\CurrentUser\My\$CertificateThumbprint
-     Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com -TenantId $TenantId -ClientId $AppId -Certificate $Cert
+     # This module does not support Certificate auth in -UseWindowsPowerShell mode in Powershell 7. Falling back to MFA mode
+     if(($PSVersionTable::PSVersion.Major) -ge 7)
+     {
+      Connect-SPOService -Url https://$($SharePointHostName)-admin.sharepoint.com
+     }
+     else
+     {
+      Connect-SPOService -Url https://$($SharePointHostName)-admin.sharepoint.com -TenantId $TenantId -ClientId $AppId -Certificate $Certificate
+     }
     }
     elseif($MFA -eq $true)
     {
-     Connect-SPOService -Url https://$SharePointHostName-admin.sharepoint.com
+     Connect-SPOService -Url https://$($SharePointHostName)-admin.sharepoint.com
     }
     if((Get-SPOTenant) -ne $null)
     {
