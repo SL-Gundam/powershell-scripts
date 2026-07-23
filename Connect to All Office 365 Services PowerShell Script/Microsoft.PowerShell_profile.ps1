@@ -33,20 +33,31 @@ Function UpdateModules {
         Uninstall-Module MSOnline -Force -AllVersions -ErrorAction:SilentlyContinue
     }
 
+    $lockModules = @(
+        [pscustomobject]@{Name='ExchangeOnlineManagement';keepVersion='3.9.0'} # bug certificate auth for 3.10.0 for secandcompcenter Powershell 5 en 7 AND bug with MFA auth for 3.10.0 for secandcompcenter Powershell 7
+        [pscustomobject]@{Name='Microsoft.Entra'; keepVersion='1.2.0'} # 1.3.0 still has login issues with credentials for other tenants
+        [pscustomobject]@{Name='Microsoft.Graph'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
+        [pscustomobject]@{Name='Microsoft.Graph.Beta'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
+    )
+
     $modules = Get-InstalledModule
+    foreach ( $lockModule in $lockModules ) {
+        if ($modules.Name -notcontains $lockModule.Name) {
+            write-host Locked module $lockModule.Name not yet installed
+            write-host Installing older module $lockModule.Name RequiredVersion $lockModule.keepVersion
+
+            # 1 Install desired version
+            Install-Module $lockModule.Name -RequiredVersion $lockModule.keepVersion -AllowClobber -Scope CurrentUser
+        }
+    }
+
     foreach ($module in $modules) {
         write-host Checking update for $module.Name 
 
-        $lockModules = @(
-            [pscustomobject]@{Name='ExchangeOnlineManagement';keepVersion='3.9.0'} # bug certificate auth for 3.10.0 for secandcompcenter Powershell 5 en 7 AND bug with MFA auth for 3.10.0 for secandcompcenter Powershell 7
-            [pscustomobject]@{Name='Microsoft.Entra'; keepVersion='1.2.0'} # 1.3.0 still has login issues with credentials for other tenants
-            [pscustomobject]@{Name='Microsoft.Graph'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
-            [pscustomobject]@{Name='Microsoft.Graph.Beta'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
-        )
         $versionLocked = $False
 
         foreach ( $lockModule in $lockModules ) {
-            if ( $module.Name.StartsWith( $lockModule.Name ) ) {
+            if ( ( $module.Name.StartsWith( $lockModule.Name ) ) -and ( -not $module.Name.StartsWith( "$($lockModule.Name).Beta" ) ) ) {
                 $versionLocked = $True
 
                 if ( $module.Name -eq $lockModule.Name ) {
