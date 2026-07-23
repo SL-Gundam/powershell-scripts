@@ -106,6 +106,15 @@ else
   }
  }
 
+ if($GraphScopes.Length -eq 0)
+ {
+  $GraphScopes = @("User.Read.All")
+ }
+ if($EntraScopes.Length -eq 0)
+ {
+  $EntraScopes = @("User.Read.All")
+ }
+
  $ConnectedServices=@()
  if($Services.Length -eq 8)
  {
