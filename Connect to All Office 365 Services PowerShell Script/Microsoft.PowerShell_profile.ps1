@@ -190,7 +190,16 @@ Function DisconnectEXOnline {
 
 Function GetCurrentAccounts {
     Write-Host MSGraph: (Get-MgOrganization -ErrorAction:SilentlyContinue).DisplayName
-    write-host Entra: (Get-EntraUser -Top 1 -ErrorAction:SilentlyContinue).UserPrincipalName
+
+    try {
+        $GetEntraUser = (Get-EntraUser -Top 1 -ErrorAction:Stop).UserPrincipalName
+        $Connected = $true
+    }
+    catch {
+        $Connected = $false
+    }
+    write-host Entra: $GetEntraUser
+
     Write-Host Teams: (Get-CsTenant -ErrorAction:SilentlyContinue).DisplayName
 
     try {
