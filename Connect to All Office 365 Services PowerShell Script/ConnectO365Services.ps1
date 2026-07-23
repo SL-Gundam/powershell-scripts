@@ -47,8 +47,8 @@ Param
     [string]$CertificateThumbprint,
     [string]$UserName,
     [string]$Password,
-    [string[]]$GraphScopes=(),
-    [string[]]$EntraScopes=()
+    [string[]]$GraphScopes,
+    [string[]]$EntraScopes
 )
 
 #Disconnecting Sessions
@@ -88,7 +88,10 @@ else
  if($CBA -eq $true)
  {
   $Certificate = Get-ChildItem Cert:\ -Recurse |
-   Where-Object { $_.Thumbprint -eq $CertificateThumbprint } |
+   Where-Object {
+    $_.Thumbprint -eq $CertificateThumbprint -and
+    $_.HasPrivateKey
+   } |
    Select-Object -First 1
   if (-not $Certificate)
   {
@@ -475,7 +478,7 @@ else
     # We do not need to login if MS Graph is logged in
     if($ConnectedServices -contains "MS Graph")
     {
-     Write-Host "Skipping MS Graph Beta login since MS Graph is already logged in"
+     Write-Host "Skipping MS Graph Beta login since MS Graph is already logged in" -ForegroundColor yellow
     }
     else
     {
@@ -531,7 +534,7 @@ else
     # We do not need to login if MS Graph is logged in
     if($ConnectedServices -contains "MS Graph")
     {
-     Write-Host "Skipping MS Entra login since MS Graph is already logged in"
+     Write-Host "Skipping MS Entra login since MS Graph is already logged in" -ForegroundColor yellow
     }
     else
     {
