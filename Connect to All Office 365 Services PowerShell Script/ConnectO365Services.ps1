@@ -200,7 +200,7 @@ else
 
     if(($PSVersionTable::PSVersion.Major) -ge 7)
     {
-     Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell -DisableNameChecking
+     Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell -DisableNameChecking -WarningAction SilentlyContinue
      Write-Host The login dialog could be hidden behind another window -ForegroundColor Red
     }
 
