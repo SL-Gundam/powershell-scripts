@@ -294,7 +294,7 @@ else
        else {
         $PnPapp = $false
        }
-       if (-not $app) {
+       if (-not $PnPapp) {
         Write-Host "Adding PnP.PowerShell App..." -ForegroundColor Yellow
         $NEWPnPapp = Register-PnPEntraIDAppForInteractiveLogin -ApplicationName "PnP.PowerShell" -Tenant "$($SharePointHostName).onmicrosoft.com"
         $PnPClientID= $NEWPnPapp.'AzureAppId/ClientId'
