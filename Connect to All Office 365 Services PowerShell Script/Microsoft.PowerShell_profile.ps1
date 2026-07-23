@@ -2,8 +2,10 @@
 $Shell.WindowTitle="SysadminGeek"
 
 $GraphScopes = @(
+    "User.Read.All"
 )
 $EntraScopes = @(
+    "User.Read.All"
 )
 $CertificateValidityPeriod = (Get-Date).AddYears(1)
 
