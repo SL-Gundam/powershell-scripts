@@ -41,6 +41,7 @@ Function UpdateModules {
             [pscustomobject]@{Name='ExchangeOnlineManagement';keepVersion='3.9.0'} # bug certificate auth for 3.10.0 for secandcompcenter Powershell 5 en 7 AND bug with MFA auth for 3.10.0 for secandcompcenter Powershell 7
             [pscustomobject]@{Name='Microsoft.Entra'; keepVersion='1.2.0'} # 1.3.0 still has login issues with credentials for other tenants
             [pscustomobject]@{Name='Microsoft.Graph'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
+            [pscustomobject]@{Name='Microsoft.Graph.Beta'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
         )
         $versionLocked = $False
 
