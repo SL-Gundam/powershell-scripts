@@ -46,9 +46,11 @@ Param
     [string]$AppId,
     [string]$CertificateThumbprint,
     [string]$UserName, 
-    [string]$Password
+    [string]$Password,
+    [string[]]$GraphScopes=(),
+    [string[]]$EntraScopes=()
 )
- 
+
 #Disconnecting Sessions
 if($Disconnect.IsPresent)
 {
@@ -425,7 +427,7 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-MgGraph -ContextScope Process -NoWelcome
+     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
@@ -433,7 +435,7 @@ else
     }
     elseif($MFA -eq $true)
     {
-     Connect-MgGraph -ContextScope Process -NoWelcome
+     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
     }
 
     #Check for MS Graph connectivity
@@ -470,7 +472,7 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Graph Beta doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-MgGraph -ContextScope Process -NoWelcome
+     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
@@ -478,7 +480,7 @@ else
     }
     elseif($MFA -eq $true)
     {
-     Connect-MgGraph -ContextScope Process -NoWelcome
+     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
     }
 
     #Check for MS Graph Beta connectivity
@@ -515,7 +517,7 @@ else
     if($CredentialPassed -eq $true)
     {
      Write-Host "MS Entra doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-Entra -ContextScope Process -NoWelcome
+     Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
     }
     elseif($CBA -eq $true)
     {
@@ -523,7 +525,7 @@ else
     }
     elseif($MFA -eq $true)
     {
-     Connect-Entra -ContextScope Process -NoWelcome
+     Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
     }
 
     #Check for MS Entra connectivity
