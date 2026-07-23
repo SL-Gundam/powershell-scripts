@@ -469,18 +469,26 @@ else
      Continue
     }
 
-    if($CredentialPassed -eq $true)
+    # We do not need to login if MS Graph is logged in
+    if($ConnectedServices -contains "MS Graph")
     {
-     Write-Host "MS Graph Beta doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
+     Write-Host "Skipping MS Graph Beta login since MS Graph is already logged in"
     }
-    elseif($CBA -eq $true)
+    else
     {
-     Connect-MgGraph -TenantId $TenantId -ClientId $AppId -Certificate $Certificate -ContextScope Process -NoWelcome
-    }
-    elseif($MFA -eq $true)
-    {
-     Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
+     if($CredentialPassed -eq $true)
+     {
+      Write-Host "MS Graph Beta doesn't support passing credential as parameters. Please enter the credential in the prompt."
+      Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
+     }
+     elseif($CBA -eq $true)
+     {
+      Connect-MgGraph -TenantId $TenantId -ClientId $AppId -Certificate $Certificate -ContextScope Process -NoWelcome
+     }
+     elseif($MFA -eq $true)
+     {
+      Connect-MgGraph -Scopes $GraphScopes -ContextScope Process -NoWelcome
+     }
     }
 
     #Check for MS Graph Beta connectivity
@@ -514,18 +522,26 @@ else
      Continue
     }
 
-    if($CredentialPassed -eq $true)
+    # We do not need to login if MS Graph is logged in
+    if($ConnectedServices -contains "MS Graph")
     {
-     Write-Host "MS Entra doesn't support passing credential as parameters. Please enter the credential in the prompt."
-     Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
+     Write-Host "Skipping MS Entra login since MS Graph is already logged in"
     }
-    elseif($CBA -eq $true)
+    else
     {
-     Connect-Entra -ApplicationId $AppId -TenantId $TenantId -Certificate $Certificate -ContextScope Process -NoWelcome
-    }
-    elseif($MFA -eq $true)
-    {
-     Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
+     if($CredentialPassed -eq $true)
+     {
+      Write-Host "MS Entra doesn't support passing credential as parameters. Please enter the credential in the prompt."
+      Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
+     }
+     elseif($CBA -eq $true)
+     {
+      Connect-Entra -ApplicationId $AppId -TenantId $TenantId -Certificate $Certificate -ContextScope Process -NoWelcome
+     }
+     elseif($MFA -eq $true)
+     {
+      Connect-Entra -Scopes $EntraScopes -ContextScope Process -NoWelcome
+     }
     }
 
     #Check for MS Entra connectivity
