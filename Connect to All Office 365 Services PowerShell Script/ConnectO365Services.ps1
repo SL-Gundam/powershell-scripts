@@ -36,7 +36,7 @@ Param
 (
     [Parameter(Mandatory = $false)]
     [switch]$Disconnect,
-    # Load order needs MSGraph early to to obtain SharePointHostName. MSTeams also needs to be early in the load order to prevent login issues
+    # Load order needs MSGraph early to obtain SharePointHostName. MSTeams also needs to be early in the load order to prevent login issues
     [ValidateSet('MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra')]
     [string[]]$Services=('MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra'),
     [string]$SharePointHostName,
@@ -443,8 +443,11 @@ else
     {
      $ConnectedServices+="MS Graph"
 
-     $domain = (Get-MgDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
-     $SharePointHostName = $domain[0].trim()
+     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") )
+     {
+      $domain = (Get-MgDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
+      $SharePointHostName = $domain[0].trim()
+     }
     }
    }
 
@@ -496,8 +499,11 @@ else
     {
      $ConnectedServices+="MS Graph Beta"
 
-     $domain = (Get-MgBetaDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
-     $SharePointHostName = $domain[0].trim()
+     if(!($PSBoundParameters['SharePointHostName']) -and ([string]$SharePointHostName -eq "") )
+     {
+      $domain = (Get-MgBetaDomain | Where-Object {$_.IsInitial -eq $true}).Id -split ".onmicrosoft.com"
+      $SharePointHostName = $domain[0].trim()
+     }
     }
    }
 
