@@ -127,7 +127,7 @@ else
     {
      Write-Host Required Exchange Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Install-Module ExchangeOnlineManagement -Scope CurrentUser
      }
@@ -168,7 +168,7 @@ else
     {
      Write-Host SharePoint Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Install-Module Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser
      }
@@ -233,7 +233,7 @@ else
     {
      Write-Host SharePoint PnP module module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Install-Module -Name $PnPModule -AllowClobber -Scope CurrentUser
      }
@@ -326,7 +326,7 @@ else
     {
      Write-Host Exchange Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Install-Module ExchangeOnlineManagement -Scope CurrentUser
      }
@@ -368,7 +368,7 @@ else
     {
      Write-Host Required MicrosoftTeams module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Install-Module MicrosoftTeams -AllowClobber -Scope CurrentUser
      }
@@ -407,7 +407,7 @@ else
     {
      Write-Host Microsoft Graph PowerShell SDK is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Write-host "Installing Microsoft Graph PowerShell module..."
       Install-Module Microsoft.Graph -AllowClobber -Scope CurrentUser
@@ -454,7 +454,7 @@ else
     {
      Write-Host Microsoft Graph Beta PowerShell SDK is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Write-host "Installing Microsoft Graph Beta PowerShell module..."
       Install-Module Microsoft.Graph.Beta -AllowClobber -Scope CurrentUser
@@ -509,7 +509,7 @@ else
     {
      Write-Host Microsoft Entra PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
-     if($Confirm -match "[yY]")
+     if($Confirm -eq 'y')
      {
       Write-host "Installing Microsoft Entra PowerShell module..."
       Install-Module Microsoft.Entra -AllowClobber -Scope CurrentUser
