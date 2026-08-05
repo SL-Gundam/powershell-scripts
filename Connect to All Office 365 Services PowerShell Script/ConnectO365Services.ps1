@@ -155,7 +155,7 @@ else
     {
      Connect-ExchangeOnline -ShowBanner:$false
     }
-    If((Get-EXOMailbox -ResultSize 1) -ne $null)
+    if(Get-ConnectionInformation | Where-Object {$_.State -eq 'Connected' -and -not $_.IsEopSession})
     {
      $ConnectedServices+="Exchange Online"
     }
@@ -274,7 +274,7 @@ else
        $PnPClientID = $JSON.PnP7.$SharePointHostName
       }
       else {
-       if($RequiredServices -contains "MSGraph") {
+       if($ConnectedServices -contains "MS Graph") {
         $PnPapp = Get-MgApplication -ConsistencyLevel eventual -Filter "DisplayName eq 'PnP.PowerShell'"
        }
        else {
@@ -313,7 +313,7 @@ else
      }
     }
 
-    If ($? -eq $true)
+    if (Get-PnPConnection)
     {
      $ConnectedServices+="SharePoint PnP"
     }
@@ -354,8 +354,7 @@ else
     {
      Connect-IPPSSession -ShowBanner:$false
     }
-    $Result=Get-RetentionCompliancePolicy
-    If(($?) -eq $true)
+    if(Get-ConnectionInformation | Where-Object {$_.State -eq 'Connected' -and $_.IsEopSession})
     {
      $ConnectedServices+="Security & Compliance Center"
     }
@@ -393,7 +392,7 @@ else
     }
 
     #Check for Teams connectivity
-    If($Teams -ne $null)
+    if(Get-CsTenant)
     {
      $ConnectedServices+="MS Teams"
     }
@@ -434,7 +433,7 @@ else
     }
 
     #Check for MS Graph connectivity
-    If((Get-MgUser -Top 1) -ne $null)
+    if(Get-MgContext)
     {
      $ConnectedServices+="MS Graph"
 
@@ -489,7 +488,7 @@ else
     }
 
     #Check for MS Graph Beta connectivity
-    If((Get-MgBetaUser -Top 1) -ne $null)
+    if(Get-MgContext)
     {
      $ConnectedServices+="MS Graph Beta"
 
@@ -544,7 +543,7 @@ else
     }
 
     #Check for MS Entra connectivity
-    If((Get-EntraUser -Top 1) -ne $null)
+    if((Get-EntraUser -Top 1) -ne $null) # Get-EntraContext for entra 1.3 or higher
     {
      $ConnectedServices+="MS Entra"
     }
