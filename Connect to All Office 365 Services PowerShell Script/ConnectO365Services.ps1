@@ -47,8 +47,8 @@ Param
     [string]$CertificateThumbprint,
     [string]$UserName,
     [string]$Password,
-    [string[]]$GraphScopes,
-    [string[]]$EntraScopes
+    [string[]]$GraphScopes=("User.Read.All"),
+    [string[]]$EntraScopes=("User.Read.All")
 )
 
 #Disconnecting Sessions
@@ -104,15 +104,6 @@ else
   {
    Write-Host Retrieved certificate from store -ForegroundColor Green
   }
- }
-
- if($GraphScopes.Length -eq 0)
- {
-  $GraphScopes = @("User.Read.All")
- }
- if($EntraScopes.Length -eq 0)
- {
-  $EntraScopes = @("User.Read.All")
  }
 
  $ConnectedServices=@()
