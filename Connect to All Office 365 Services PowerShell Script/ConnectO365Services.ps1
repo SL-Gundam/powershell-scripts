@@ -107,14 +107,7 @@ else
  }
 
  $ConnectedServices=@()
- if($Services.Length -eq 8)
- {
-  $RequiredServices=$Services
- }
- else
- {
-  $RequiredServices=$PSBoundParameters.Services
- }
+ $RequiredServices=$Services
 
  #Loop through each required services
  Foreach($Service in $RequiredServices)
