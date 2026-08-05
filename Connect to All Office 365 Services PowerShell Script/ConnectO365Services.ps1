@@ -109,6 +109,11 @@ else
  $ConnectedServices=@()
  $RequiredServices=$Services
 
+ $InstalledModules = @{}
+ Get-InstalledModule -ErrorAction SilentlyContinue | ForEach-Object {
+  $InstalledModules[$_.Name] = $_
+ }
+
  #Loop through each required services
  Foreach($Service in $RequiredServices)
  {
@@ -118,8 +123,7 @@ else
    #Module and Connection settings for Exchange Online module
    ExchangeOnline
    {
-    $Module=Get-InstalledModule -Name ExchangeOnlineManagement -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('ExchangeOnlineManagement'))
     {
      Write-Host Required Exchange Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -160,8 +164,7 @@ else
    #Module and Connection settings for SharePoint Online module
    SharePointOnline
    {
-    $Module=Get-InstalledModule -Name Microsoft.Online.SharePoint.PowerShell -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('Microsoft.Online.SharePoint.PowerShell'))
     {
      Write-Host SharePoint Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -226,8 +229,7 @@ else
     {
      $PnPModule = "SharePointPnPPowerShellOnline" # powershell 5
     }
-    $Module=Get-InstalledModule -Name $PnPModule -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey($PnPModule))
     {
      Write-Host SharePoint PnP module module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -320,8 +322,7 @@ else
    #Module and Connection settings for Security & Compliance center
    SecAndCompCenter
    {
-    $Module=Get-InstalledModule -Name ExchangeOnlineManagement -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('ExchangeOnlineManagement'))
     {
      Write-Host Exchange Online PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -363,8 +364,7 @@ else
    #Module and Connection settings for Teams Online module
    MSTeams
    {
-    $Module=Get-InstalledModule -Name MicrosoftTeams -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('MicrosoftTeams'))
     {
      Write-Host Required MicrosoftTeams module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -403,8 +403,7 @@ else
    MSGraph
    {
     #Check for module installation
-    $Module=Get-InstalledModule -Name Microsoft.Graph -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('Microsoft.Graph'))
     {
      Write-Host Microsoft Graph PowerShell SDK is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -451,8 +450,7 @@ else
    MSGraphBeta
    {
     #Check for module installation
-    $Module=Get-InstalledModule -Name Microsoft.Graph.Beta -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('Microsoft.Graph.Beta'))
     {
      Write-Host Microsoft Graph Beta PowerShell SDK is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
@@ -507,8 +505,7 @@ else
    MSEntra
    {
     #Check for module installation
-    $Module=Get-InstalledModule -Name Microsoft.Entra -ErrorAction SilentlyContinue
-    if($Module.count -eq 0)
+    if(-not $InstalledModules.ContainsKey('Microsoft.Entra'))
     {
      Write-Host Microsoft Entra PowerShell module is not available  -ForegroundColor yellow
      $Confirm= Read-Host Are you sure you want to install module? [Y] Yes [N] No
