@@ -15,26 +15,26 @@ Function UpdateModules {
     if((($PSVersionTable::PSVersion.Major) -ge 7) -and (Get-InstalledModule -Name SharePointPnPPowerShellOnline -ErrorAction:SilentlyContinue))
     {
         # Uninstalling legacy module
-        Write-Host Removing SharePointPnPPowerShellOnline. Legacy module Powershell 7.
+        Write-Host Removing SharePointPnPPowerShellOnline. Legacy module Powershell 7. -ForegroundColor Green
         Uninstall-Module SharePointPnPPowerShellOnline -Force -AllVersions -ErrorAction:SilentlyContinue
     }
 
     if(Get-InstalledModule -Name AzureAD -ErrorAction:SilentlyContinue)
     {
         # Uninstalling legacy module
-        Write-Host Removing AzureAD.
+        Write-Host Removing AzureAD. -ForegroundColor Green
         Uninstall-Module AzureAD -Force -AllVersions -ErrorAction:SilentlyContinue
     }
 
     if(Get-InstalledModule -Name MSOnline -ErrorAction:SilentlyContinue)
     {
         # Uninstalling legacy module
-        Write-Host Removing MSOnline.
+        Write-Host Removing MSOnline. -ForegroundColor Green
         Uninstall-Module MSOnline -Force -AllVersions -ErrorAction:SilentlyContinue
     }
 
     $lockModules = @(
-        [pscustomobject]@{Name='ExchangeOnlineManagement';keepVersion='3.9.0'} # bug certificate auth for 3.10.0 for secandcompcenter Powershell 5 en 7 AND bug with MFA auth for 3.10.0 for secandcompcenter Powershell 7
+        [pscustomobject]@{Name='ExchangeOnlineManagement';keepVersion='3.9.0'} # bug certificate auth for 3.10.0 for secandcompcenter Powershell 5 en 7 AND bug with MFA auth for 3.10.1 for secandcompcenter Powershell 7
         [pscustomobject]@{Name='Microsoft.Entra'; keepVersion='1.2.0'} # 1.3.0 still has login issues with credentials for other tenants
         [pscustomobject]@{Name='Microsoft.Graph'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
         [pscustomobject]@{Name='Microsoft.Graph.Beta'; keepVersion='2.33.0'} # 2.38.0 still has login issues with credentials for other tenants
@@ -43,8 +43,8 @@ Function UpdateModules {
     $modules = Get-InstalledModule
     foreach ( $lockModule in $lockModules ) {
         if ($modules.Name -notcontains $lockModule.Name) {
-            write-host Locked module $lockModule.Name not yet installed
-            write-host Installing older module $lockModule.Name RequiredVersion $lockModule.keepVersion
+            write-host Locked module $lockModule.Name not yet installed -ForegroundColor Cyan
+            write-host Installing older module $lockModule.Name RequiredVersion $lockModule.keepVersion -ForegroundColor Green
 
             # 1 Install desired version
             Install-Module $lockModule.Name -RequiredVersion $lockModule.keepVersion -AllowClobber -Scope CurrentUser
@@ -52,7 +52,7 @@ Function UpdateModules {
     }
 
     foreach ($module in $modules) {
-        write-host Checking update for $module.Name 
+        write-host Checking update for $module.Name -ForegroundColor Cyan
 
         $versionLocked = $False
 
@@ -61,10 +61,12 @@ Function UpdateModules {
                 $versionLocked = $True
 
                 if ( $module.Name -eq $lockModule.Name ) {
-                    write-host Installing older module $lockModule.Name RequiredVersion $lockModule.keepVersion and uninstalling all other versions
+                    write-host Installing older module $lockModule.Name RequiredVersion $lockModule.keepVersion and uninstalling all other versions -ForegroundColor Green
 
                     # 1 Installeer gewenste versie
-                    Install-Module $lockModule.Name -RequiredVersion $lockModule.keepVersion -AllowClobber -Scope CurrentUser
+                    if ( $module.Version -ne $lockModule.keepVersion ) {
+                        Install-Module $lockModule.Name -RequiredVersion $lockModule.keepVersion -AllowClobber -Scope CurrentUser
+                    }
 
                     # Show latest version
                     Find-Module $lockModule.Name | Format-Table
@@ -75,7 +77,7 @@ Function UpdateModules {
                 foreach ( $version in $allVersions ) {
                     write-host "Checking locked $($module.Name) $($version.Version)"
                     if ( $version.Version -ne $lockModule.keepVersion ) {
-                        Write-Host "Removing $($module.Name) $($version.Version)"
+                        Write-Host "Removing $($module.Name) $($version.Version)" -ForegroundColor Green
                         Uninstall-Module -Name $module.Name -RequiredVersion $version.Version -Force
                     }
                 }
@@ -88,7 +90,7 @@ Function UpdateModules {
     }
     
     # Cleanup older versions of modules
-    Write-Host "Cleanup older versions of modules"
+    Write-Host "Cleanup older versions of modules" -ForegroundColor Cyan
     $modules = Get-InstalledModule
     foreach ($module in $modules) {
         Get-InstalledModule -Name $module.Name -AllVersions | Group-Object Name | ForEach-Object {
@@ -96,38 +98,43 @@ Function UpdateModules {
             $latest = $moduleGroup | Select-Object -First 1
             $olderVersions = $moduleGroup | Where-Object { $_.Version -ne $latest.Version }
             foreach ($old in $olderVersions) {
-                Write-Host "Removing $($old.Name) v$($old.Version)"
+                Write-Host "Removing $($old.Name) v$($old.Version)" -ForegroundColor Green
                 Uninstall-Module -Name $old.Name -RequiredVersion $old.Version -Force
             }
         }
     }
 
     # Check orphaned modules
-    $profilemodulepath = (Split-Path $PROFILE) + "\Modules"
     $installed = Get-InstalledModule
-    $modulePaths = @(
-        "$env:ProgramFiles\WindowsPowerShell\Modules",
-        $profilemodulepath
-    )
+    $modulePaths = $env:PSModulePath -split ';'
+    $modulePaths = $modulePaths | Where-Object {
+        $_ -notmatch '\\WindowsPowerShell\\v1\.0\\Modules\\?$'
+    }
 
     foreach ($path in $modulePaths) {
         Get-ChildItem -Path $path -Directory | ForEach-Object {
             if ($installed.Name -notcontains $_.Name) {
-                Write-Host "Potential orphaned module: $($_.FullName)"
+                Write-Host "Potential orphaned module: $($_.FullName)" -ForegroundColor Yellow
             }
         }
     }
 
     # Problems Sharepoint Online not updating
-    if(Get-InstalledModule -Name Microsoft.Online.SharePoint.PowerShell -ErrorAction:SilentlyContinue)
+    $getmodule = Get-InstalledModule -Name Microsoft.Online.SharePoint.PowerShell -ErrorAction:SilentlyContinue
+    if($getmodule)
     {
-        if((Get-InstalledModule -Name Microsoft.Online.SharePoint.PowerShell).Version -ne (Find-Module Microsoft.Online.SharePoint.PowerShell).Version)
+        $findmodule = Find-Module Microsoft.Online.SharePoint.PowerShell -ErrorAction:SilentlyContinue
+        if($getmodule -and $findmodule -and $getmodule.Version -ne $findmodule.Version)
         {
             # Uninstalling promatic module module
-            Write-Host Removing Microsoft.Online.SharePoint.PowerShell to fix update issue.
+            Write-Host Removing Microsoft.Online.SharePoint.PowerShell to fix update issue. -ForegroundColor Green
             Uninstall-Module Microsoft.Online.SharePoint.PowerShell -Force -AllVersions -ErrorAction:SilentlyContinue
             $profilemodulepath = (Split-Path $PROFILE) + "\Modules"
-            remove-item "$profilemodulepath\Microsoft.Online.SharePoint.PowerShell\*" -recurse
+            $spPath = Join-Path $profilemodulepath 'Microsoft.Online.SharePoint.PowerShell'
+            if (Test-Path $spPath)
+            {
+                Remove-Item $spPath -Recurse -Force
+            }
         }
     }
 }
@@ -165,7 +172,7 @@ Function ConnectEXOnlineJSON {
         $selectedTenant = $tenants[$choice - 1]
 
 
-        Write-Host Available services: 'MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra'
+        Write-Host Available services: 'MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra' -ForegroundColor Cyan
         $Service=Read-Host -Prompt "Which service (leave empty for all)?"
 
         if($Service -eq ""){
@@ -180,7 +187,7 @@ Function ConnectEXOnlineJSON {
 }
 
 Function ConnectEXOnlineMFA {
-    Write-Host Available services: 'MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra'
+    Write-Host Available services: 'MSGraph','MSGraphBeta','MSTeams','SharePointOnline','SharePointPnP','SecAndCompCenter','ExchangeOnline','MSEntra' -ForegroundColor Cyan
     $Service=Read-Host -Prompt "Which service (leave empty for all)?"
 
     if($Service -eq ""){
@@ -615,7 +622,7 @@ function Reload-Profile {
     . $PROFILE
 }
 
-function Show-FunctionMenu {
+function HELPER_Show-FunctionMenu {
     $filePath = $PSCommandPath
     $functionNames = @()
 
@@ -634,8 +641,7 @@ function Show-FunctionMenu {
     }
     else
     {
-        $functionNames = $functionNames | Where-Object { $_ -ne "Show-FunctionMenu" }
-        $functionNames = $functionNames | Where-Object { $_ -ne "Test-NoPowerShellArguments" }
+        $functionNames = $functionNames | Where-Object { -not $_.StartsWith("HELPER_") }
 
         $functionNames += "Exit"
     }
@@ -677,7 +683,7 @@ function Show-FunctionMenu {
     }
 }
 
-function Test-NoPowerShellArguments {
+function HELPER_Test-NoPowerShellArguments {
     $cmd = [Environment]::CommandLine.Trim()
 
     if ([string]::IsNullOrWhiteSpace($cmd)) {
@@ -702,6 +708,6 @@ function Test-NoPowerShellArguments {
     return [string]::IsNullOrWhiteSpace($remaining)
 }
 
-if (Test-NoPowerShellArguments) {
-    Show-FunctionMenu
+if (HELPER_Test-NoPowerShellArguments) {
+    HELPER_Show-FunctionMenu
 }
