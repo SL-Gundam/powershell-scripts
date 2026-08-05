@@ -55,16 +55,16 @@ Param
 if($Disconnect.IsPresent)
 {
  #Disconnect Exchange Online and Security & Compliance center connection
- Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
+ $dummy = Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
  #Disconnect Teams connection
- Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
+ $dummy = Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
  #Disconnect SharePoint/PnP connection
- Disconnect-SPOService -ErrorAction SilentlyContinue
- Disconnect-PnPOnline -ErrorAction SilentlyContinue
+ $dummy = Disconnect-SPOService -ErrorAction SilentlyContinue
+ $dummy = Disconnect-PnPOnline -ErrorAction SilentlyContinue
  #Disconnect MS Graph PowerShell connection
- Disconnect-MgGraph -ErrorAction SilentlyContinue
+ $dummy = Disconnect-MgGraph -ErrorAction SilentlyContinue
  #Disconnect MS Entra PowerShell connection
- Disconnect-Entra -ErrorAction SilentlyContinue
+ $dummy = Disconnect-Entra -ErrorAction SilentlyContinue
 
  Write-Host All sessions in the current window have been removed. -ForegroundColor Yellow
 }
